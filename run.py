@@ -27,11 +27,12 @@ def sms_ahoy_reply():
     # Start our response
     resp = MessagingResponse()
     body = request.values.get('Body', None)
+    body = body.lower()
     number = request.values.get('From', None)
     (command,var) = parse_message(body)
     print("response was: ", body)
     print("command was: ", command)
-    twocommands = {"signup":signup, "leave":leave, "weather":getweather}
+    twocommands = {"signup":signup, "leave":leave, "weather":getweather, "manual":manual}
     threecommands = {"sub":subscribe, "unsub": unsubscribe, "setzip": set_location}
     print("\nresponse was from: ", number)
     if command in twocommands:
@@ -40,7 +41,7 @@ def sms_ahoy_reply():
         return threecommands[command](number,var,resp)
     else:
     # Add a message
-        resp.message("SALAD: Command not recognized, please try again. (text 'help' for command manual)")
+        resp.message("Farmer SMS: Command not recognized, please try again. (text 'manual' for command manual)")
         return str(resp)
 
 def process(command, number):     #this function takes in valid commands and does to the correct action
@@ -88,14 +89,19 @@ def set_location(number,location,resp):
 def getweather(number, resp):
     locations = db.child("locations").get()
     if number in locations.val():
-        text = weatherUpdate(locations[number])
+        text = weatherUpdate(locations.val()[number])
         resp.message(text)
     else:
         text = "You must set your location before receiving weather updates."
         resp.message(text) 
     return str(resp)
 
-@app.route("/contribute")
+def manual(number, resp):
+    text = "sub weather: Sign up of daily weather updates. \n unsub: Unsubscribe for weather updates. \n weather: Get 16 day weather forcaset \n setzip [zipcode]: Set zip-code for location-based weather services "
+    resp.message(text)
+    return str(resp)
+
+@app.route("/farmersms")
 def index():
     user = {'username':'Person'}
     return render_template('index.html', title='Home', user=user)
