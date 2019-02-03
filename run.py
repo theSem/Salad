@@ -19,7 +19,7 @@ db = firebase.database()
 
 app = Flask(__name__)
 
-commands = {"sub": "sub", "unsub":"unsub", "set phonenumber": "set phonenumber", "set location": "set location"}
+commands = {"sub": subscribe(number), "unsub": unsubscribe(number), "set phonenumber": "set phonenumber", "set location": "set location"}
 
 @app.route("/sms", methods=['GET', 'POST'])
 def sms_ahoy_reply():
@@ -51,6 +51,18 @@ def process(command, number):     #this function takes in valid commands and doe
     else:
         resp.message("no action required for command(valid)")
     return str(resp)
+
+def subscribe(number):
+    db.child("numbers").update({str(number): True})
+    resp.message("You have successfully subscribed")
+
+def unsubscribe(number):
+    db.child("numbers").child(str(number)).remove()
+    resp.message("You have successfully unsubscribed")
+
+def set_location(location):
+    db.child("numbers").child(str(location)).remove()
+    resp.message("You have successfully set the location")
 
 if __name__ == "__main__":
     app.run(debug=True)
