@@ -2,6 +2,22 @@
 # Download the twilio-python library from twilio.com/docs/libraries/python
 from flask import Flask, request
 from twilio.twiml.messaging_response import MessagingResponse
+import pyrebase 
+
+config = {
+    "apiKey" : "AIzaSyBOzK-hHU8tIE6YbOG3NzbJSCiGspdC96c",
+    "authDomain": "salad-34ad3.firebaseapp.com",
+    "databaseURL": "https://salad-34ad3.firebaseio.com",
+    "projectId": "salad-34ad3",
+    "storageBucket": "salad-34ad3.appspot.com",
+    "messagingSenderId": "102368296237"
+}
+
+firebase = pyrebase.initialize_app(config)
+
+db = firebase.database()
+
+db.child("names").push({"name":"lukas"})
 
 app = Flask(__name__)
 
