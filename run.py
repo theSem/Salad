@@ -5,7 +5,7 @@ from twilio.twiml.messaging_response import MessagingResponse
 
 app = Flask(__name__)
 
-messages = {"foo": "bar"; "dummy": "data"; "crawl": "walk"}
+messages = {"foo": "bar", "dummy": "data", "crawl": "walk"}
 
 @app.route("/sms", methods=['GET', 'POST'])
 def sms_ahoy_reply():
