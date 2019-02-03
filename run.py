@@ -19,7 +19,7 @@ db = firebase.database()
 
 app = Flask(__name__)
 
-commands = {"set username": "set username","delete username":"delete username", "set phonenumber": "set phonenumber", "set location": "set location"}
+commands = {"sub": "sub", "unsub":"unsub", "set phonenumber": "set phonenumber", "set location": "set location"}
 
 @app.route("/sms", methods=['GET', 'POST'])
 def sms_ahoy_reply():
@@ -27,26 +27,27 @@ def sms_ahoy_reply():
     # Start our response
     resp = MessagingResponse()
     body = request.values.get('Body', None)
-    number = request.values.get('from', None)
+    number = request.values.get('From', None)
     print("response was: ", body)
     print("\nresponse was from: ", number)
     if body in commands:
-        return process(commands[body])
+        return process(commands[body], number)
     else:
     # Add a message
-         resp.message("Ahoy! Thanks so much for your message.")
-
+         resp.message("SALAD: Command not recognized, please try again. (text 'help' for command manual)")
     return str(resp)
 
 
-def process(command):     #this function takes in valid commands and does to the correct action
+def process(command, number):     #this function takes in valid commands and does to the correct action
     resp = MessagingResponse()
-    if command == "set username":
-        db.child("names").push({"name":"ashmita this worked"})
-        resp.message("username added successfully")
-    elif command == "delete username":
-        db.child("names").remove()
-        resp.message("username deleted successfully")
+    if command == "sub":
+        #db.child("numbers").push(str(number))
+        db.child("numbers").update({str(number): True})
+        resp.message("You have successfully subscribed")
+    elif command == "unsub":
+        print("unsubscribing " + str(number))
+        db.child("numbers").child(str(number)).remove()
+        resp.message("You have successfully unsubscribed")
     else:
         resp.message("no action required for command(valid)")
     return str(resp)
