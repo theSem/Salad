@@ -31,7 +31,7 @@ def sms_ahoy_reply():
     print("response was: ", body)
     print("\nresponse was from: ", number)
     if body in commands:
-        process(command[body])
+        return process(commands[body])
     else:
     # Add a message
          resp.message("Ahoy! Thanks so much for your message.")
@@ -40,10 +40,13 @@ def sms_ahoy_reply():
 
 
 def process(command):     #this function takes in valid commands and does to the correct action
+    resp = MessagingResponse()
     if command == "set username":
-        db.child("names").push({"name":"lukas"})
+        db.child("names").push({"name":"ashmita this worked"})
+        resp.message("username added successfully")
     else:
-        response("no action required for command(valid)")
+        resp.message("no action required for command(valid)")
+    return str(resp)
 
 if __name__ == "__main__":
     app.run(debug=True)
