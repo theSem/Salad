@@ -17,11 +17,9 @@ firebase = pyrebase.initialize_app(config)
 
 db = firebase.database()
 
-db.child("names").push({"name":"lukas"})
-
 app = Flask(__name__)
 
-messages = {"foo": "bar", "dummy": "data", "crawl": "walk"}
+commands = {"set username": "set username", "set phonenumber": "set phonenumber", "set location": "set location"}
 
 @app.route("/sms", methods=['GET', 'POST'])
 def sms_ahoy_reply():
@@ -29,14 +27,23 @@ def sms_ahoy_reply():
     # Start our response
     resp = MessagingResponse()
     body = request.values.get('Body', None)
+    number = request.values.get('from', None)
     print("response was: ", body)
-    if body in messages:
-        resp.message(messages[body])
+    print("\nresponse was from: ", number)
+    if body in commands:
+        process(command[body])
     else:
     # Add a message
          resp.message("Ahoy! Thanks so much for your message.")
 
     return str(resp)
+
+
+def process(command):     #this function takes in valid commands and does to the correct action
+    if command == "set username":
+        db.child("names").push({"name":"lukas"})
+    else:
+        response("no action required for command(valid)")
 
 if __name__ == "__main__":
     app.run(debug=True)
