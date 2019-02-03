@@ -19,7 +19,7 @@ db = firebase.database()
 
 app = Flask(__name__)
 
-commands = {"set username": "set username", "set phonenumber": "set phonenumber", "set location": "set location"}
+commands = {"set username": "set username","delete username":"delete username", "set phonenumber": "set phonenumber", "set location": "set location"}
 
 @app.route("/sms", methods=['GET', 'POST'])
 def sms_ahoy_reply():
@@ -44,6 +44,9 @@ def process(command):     #this function takes in valid commands and does to the
     if command == "set username":
         db.child("names").push({"name":"ashmita this worked"})
         resp.message("username added successfully")
+    elif command == "delete username":
+        db.child("names").remove()
+        resp.message("username deleted successfully")
     else:
         resp.message("no action required for command(valid)")
     return str(resp)
