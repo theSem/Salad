@@ -3,6 +3,8 @@
 from flask import Flask, request, render_template
 from twilio.twiml.messaging_response import MessagingResponse
 import pyrebase 
+from weather import weatherUpdate
+import time
 
 config = {
     "apiKey" : "AIzaSyBOzK-hHU8tIE6YbOG3NzbJSCiGspdC96c",
@@ -29,8 +31,8 @@ def sms_ahoy_reply():
     (command,var) = parse_message(body)
     print("response was: ", body)
     print("command was: ", command)
-    twocommands = {"signup":signup, "leave":leave}
-    threecommands = {"sub":subscribe, "unsub": unsubscribe}
+    twocommands = {"signup":signup, "leave":leave, "weather":getweather}
+    threecommands = {"sub":subscribe, "unsub": unsubscribe, "setzip": set_location}
     print("\nresponse was from: ", number)
     if command in twocommands:
         return twocommands[command](number,resp)
@@ -78,9 +80,20 @@ def unsubscribe(number, var, resp):
     print("unsubscribe")
     return str(resp)
 
-def set_location(location,resp):
-    db.child("numbers").child(str(location)).remove()
+def set_location(number,location,resp):
+    db.child("locations").update({str(number):str(location)})
     resp.message("You have successfully set the location")
+    return str(resp)
+
+def getweather(number, resp):
+    locations = db.child("locations").get()
+    if number in locations.val():
+        text = weatherUpdate(locations[number])
+        resp.message(text)
+    else:
+        text = "You must set your location before receiving weather updates."
+        resp.message(text) 
+    return str(resp)
 
 @app.route("/contribute")
 def index():
@@ -90,3 +103,7 @@ def index():
 
 if __name__ == "__main__":
     app.run(debug=True)
+
+
+
+

@@ -1,12 +1,11 @@
 import requests
 from datetime import datetime
 
-POSTAL_CODE = '92274'
 WEATHERBIT_KEY = '2573254dc43e4b1cbbb895739aafcc95'
 AERIS_ID = '5yCPVOV7ClmYRoF4RSbmB'
 AERIS_SECRET = 'Ergc2GajB2wYwdiLMd4ily0sBknJVgSZDZ7NngGE'
 
-def weatherUpdate():
+def weatherUpdate(POSTAL_CODE):
     weatherbit = requests.get("https://api.weatherbit.io/v2.0/forecast/daily?postal_code={0}&key={1}".format(POSTAL_CODE, WEATHERBIT_KEY))
     bitData = weatherbit.json()['data']
     weather = ""
@@ -14,7 +13,7 @@ def weatherUpdate():
         weather += "{0}: {1}\n".format(day + 1, weather['weather']['description'])
     return weather
 
-def advisoryUpdate():
+def advisoryUpdate(POSTAL_CODE):
     aerisweather = requests.get("https://api.aerisapi.com/alerts/{0}?&format=json&limit=10&client_id={1}&client_secret={2}".format(POSTAL_CODE, AERIS_ID, AERIS_SECRET))
     aerisData = aerisweather.json()['response']
 
@@ -24,7 +23,7 @@ def advisoryUpdate():
         return "No current weather advisories."
 
 
-def droughtUpdate():
+def droughtUpdate(POSTAL_CODE):
     drought = requests.get("https://api.aerisapi.com/droughts/monitor/{0}?client_id={1}&client_secret={2}".format(POSTAL_CODE, AERIS_ID, AERIS_SECRET))
     droughtData = drought.json()
 
