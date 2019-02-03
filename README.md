@@ -1,7 +1,7 @@
-# Salad
+# SMS Farmer (Team Salad @table32)
 
-# Software
+# Software(Technologies Used)
+- pyrebase: pip install pyrebase 
 - twilio: pip install twilio
 - flask: pip install flask
 - virtualenv: pip install venv
-- Install ngrok - go to website

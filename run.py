@@ -18,7 +18,7 @@ firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
 app = Flask(__name__)
-commands = {"sub":"sub", "unsub":"unsub"}
+
 @app.route("/sms", methods=['GET', 'POST'])
 def sms_ahoy_reply():
     """Respond to incoming messages with a friendly SMS."""
@@ -26,38 +26,57 @@ def sms_ahoy_reply():
     resp = MessagingResponse()
     body = request.values.get('Body', None)
     number = request.values.get('From', None)
+    (command,var) = parse_message(body)
     print("response was: ", body)
-   # commands = {"sub": subscribe(number,resp), "unsub": unsubscribe(number,resp)}
+    print("command was: ", command)
+    twocommands = {"signup":signup, "leave":leave}
+    threecommands = {"sub":subscribe, "unsub": unsubscribe}
     print("\nresponse was from: ", number)
-    if body in commands:
-        return process(commands[body], number)
+    if command in twocommands:
+        return twocommands[command](number,resp)
+    elif command in threecommands:
+        return threecommands[command](number,var,resp)
     else:
     # Add a message
-         resp.message("SALAD: Command not recognized, please try again. (text 'help' for command manual)")
-    return str(resp)
-
+        resp.message("SALAD: Command not recognized, please try again. (text 'help' for command manual)")
+        return str(resp)
 
 def process(command, number):     #this function takes in valid commands and does to the correct action
     resp = MessagingResponse()
-    if command == "sub":
-        #db.child("numbers").push(str(number))
-        db.child("numbers").update({str(number): True})
-        resp.message("You have successfully subscribed")
-    elif command == "unsub":
-        print("unsubscribing " + str(number))
-        db.child("numbers").child(str(number)).remove()
-        resp.message("You have successfully unsubscribed")
-    else:
-        resp.message("no action required for command(valid)")
     return str(resp)
 
-def subscribe(number,resp):
+def parse_message(message):
+    words = message.split(" ")
+    if len(words) == 1:
+        return (words[0],None)
+    else:
+        return (words[0],words[1])
+
+def signup(number,resp):
     db.child("numbers").update({str(number): True})
     resp.message("You have successfully subscribed")
+    print("signup")
+    return str(resp)
 
-def unsubscribe(number,resp):
-    db.child("numbers").child(str(number)).remove()
+def leave(number,resp):
+    db.child("numbers").update({str(number): False})
     resp.message("You have successfully unsubscribed")
+    print("leave")
+    return str(resp)
+
+def subscribe(number, var, resp):
+    db.child("services").child(str(var)).update({str(number):True})
+    message = "You have successfully subscribed to the {0} service.".format(var)
+    print("subscribe")
+    resp.message(message)
+    return str(resp)
+
+def unsubscribe(number, var, resp):
+    db.child("services").child(str(var)).update({str(number):True})
+    message = "You have successfully unsubscribed from the {0} service.".format(var)
+    resp.message(message)
+    print("unsubscribe")
+    return str(resp)
 
 def set_location(location,resp):
     db.child("numbers").child(str(location)).remove()
