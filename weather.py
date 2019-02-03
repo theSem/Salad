@@ -10,7 +10,7 @@ def weatherUpdate(POSTAL_CODE):
     bitData = weatherbit.json()['data']
     weather = ""
     for day, weather in enumerate(bitData):
-        weather += "{0}: {1}\n".format(day + 1, weather['weather']['description'])
+        weather += "{0}: {1}\n".format(day + 1, bitData['weather']['description'])
     return weather
 
 def advisoryUpdate(POSTAL_CODE):
