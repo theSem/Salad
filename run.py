@@ -18,7 +18,7 @@ firebase = pyrebase.initialize_app(config)
 db = firebase.database()
 
 app = Flask(__name__)
-
+commands = {"sub":"sub", "unsub":"unsub"}
 @app.route("/sms", methods=['GET', 'POST'])
 def sms_ahoy_reply():
     """Respond to incoming messages with a friendly SMS."""
@@ -27,7 +27,7 @@ def sms_ahoy_reply():
     body = request.values.get('Body', None)
     number = request.values.get('From', None)
     print("response was: ", body)
-    commands = {"sub": subscribe(number,resp), "unsub": unsubscribe(number,resp)}
+   # commands = {"sub": subscribe(number,resp), "unsub": unsubscribe(number,resp)}
     print("\nresponse was from: ", number)
     if body in commands:
         return process(commands[body], number)
