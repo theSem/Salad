@@ -10,11 +10,10 @@ def sms_ahoy_reply():
     """Respond to incoming messages with a friendly SMS."""
     # Start our response
     resp = MessagingResponse()
-    print("response was: ",resp)
-    print("\n")
+    print("response was: ", str(resp))
     if resp == "foo":
         resp.message("bar")
-    else: 
+    else:
     # Add a message
          resp.message("Ahoy! Thanks so much for your message.")
 
