@@ -97,7 +97,7 @@ def getweather(number, resp):
     return str(resp)
 
 def manual(number, resp):
-    text = "sub weather: Sign up of daily weather updates. \n unsub: Unsubscribe for weather updates. \n weather: Get 16 day weather forcaset \n setzip [zipcode]: Set zip-code for location-based weather services "
+    text = "\n sub weather: Sign up of daily weather updates. \n unsub: Unsubscribe for weather updates. \n weather: Get 16 day weather forcaset \n setzip [zipcode]: Set zip-code for location-based weather services "
     resp.message(text)
     return str(resp)
 
